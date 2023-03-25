@@ -35,6 +35,7 @@ def serp_api(request):
   #new report 
   if request.method == "POST":
         print('---------post----------')
+        resp = {}
         # Get feelings
         data = JSONParser().parse(request)
         id = data["id"]
@@ -48,7 +49,8 @@ def serp_api(request):
         create_report(no, id, "التقرير جديد", feelings, prediction, table_classes)
         
         sucess = "تم انشاء التقرير بنجاح"
-        return Response(sucess)
+        resp ['sucess']=sucess
+        return Response(resp)
 
         
     # Render app
