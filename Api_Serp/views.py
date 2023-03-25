@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from .app import feel_ing
-from .request_final import article
+from .reporter import words_classifier,create_report
 api_token = 'ec3e2412d3d6e96e32039c78f735c2699a9072b0'
 our_token = '71d169a1'
 @api_view(['GET', 'POST'])
@@ -32,8 +32,33 @@ def serp_api(request):
         final['feeling english'] = english 
         final['feeling arabic'] = arabic 
         return Response(final)
+  #new report 
+  if request.method == "POST":
+        print('---------post----------')
+        # Get feelings
+        data = JSONParser().parse(request)
+        id = data["id"]
+        no = data["no"]
+        feelings = data["feelings"]
+        
+        # Get prediction
+        english , prediction = feel_ing(feelings)
+        
+        table_classes = words_classifier(feelings)
+        create_report(no, id, "التقرير جديد", feelings, prediction, table_classes)
+        
+        sucess = "تم انشاء التقرير بنجاح"
+        return Response(sucess)
+
+        
+    # Render app
+    
+ 
+#def report (request):
+  
+
   #else:
     #data["detail"]="Bad Request"
     #return Response(data,status= status.HTTP_400_BAD_REQUEST)
 
-#{"keyword":" بشرة","section_number" :2 ,"token" :"71d169a1" ,"language":"ar","country" :"eg" }
+  #{"id":"1","no" :2 ,"feelings" :"انا حزين"}
