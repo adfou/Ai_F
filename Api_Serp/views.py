@@ -38,8 +38,8 @@ def serp_api(request):
         resp = {}
         # Get feelings
         #print(request.data)
-        data =JSONParser().parse(request)
-        print(data)
+        #data =JSONParser().parse(request).decode('utf-8')
+        #print(data)
         '''id = data["id"]
         no = data["no"]
         feelings = data["feelings"]'''
