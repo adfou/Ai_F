@@ -17,10 +17,10 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 import transformers
 from transformers import BertTokenizer, TFBertForSequenceClassification
-# nltk.download('punkt')
+nltk.download('punkt')
 nltk.download('stopwords')
-# nltk.download('wordnet')
-# nltk.download('omw-1.4')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 
 # Sklearn, Tesnorflow and Keras packages
 '''import tensorflow as tf
