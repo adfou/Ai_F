@@ -37,8 +37,8 @@ def serp_api(request):
         print('---------post----------')
         resp = {}
         # Get feelings
-        print(request.data)
-        data = request.data
+        #print(request.data)
+        data =JSONParser().parse(request)
         id = data["id"]
         no = data["no"]
         feelings = data["feelings"]
@@ -67,3 +67,4 @@ def serp_api(request):
     #return Response(data,status= status.HTTP_400_BAD_REQUEST)
 
   #{"id":"1","no" :"2","feelings" :"انا حزين"}
+  #{"keyword":" بشرة","section_number" :2 ,"token" :"71d169a1" ,"language":"ar","country" :"eg" }
