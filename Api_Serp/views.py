@@ -37,7 +37,8 @@ def serp_api(request):
         print('---------post----------')
         resp = {}
         # Get feelings
-        data = JSONParser().parse(request)
+        print(request.data)
+        data = request.data
         id = data["id"]
         no = data["no"]
         feelings = data["feelings"]
