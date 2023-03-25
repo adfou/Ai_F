@@ -39,9 +39,13 @@ def serp_api(request):
         # Get feelings
         #print(request.data)
         data =JSONParser().parse(request)
-        id = data["id"]
+        print(data)
+        '''id = data["id"]
         no = data["no"]
-        feelings = data["feelings"]
+        feelings = data["feelings"]'''
+        id = "1"
+        no = "2"
+        feelings = "joy"
         
         # Get prediction
 
