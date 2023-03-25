@@ -43,11 +43,13 @@ def serp_api(request):
         feelings = data["feelings"]
         
         # Get prediction
+
         english , prediction = feel_ing(feelings)
-        
+        print('---------feel_ing----------')
         table_classes = words_classifier(feelings)
+        print('---------words_classifier----------')
         create_report(no, id, "التقرير جديد", feelings, prediction, table_classes)
-        
+        print('---------create_report----------')
         sucess = "تم انشاء التقرير بنجاح"
         resp ['sucess']=sucess
         return Response(resp)
@@ -63,4 +65,4 @@ def serp_api(request):
     #data["detail"]="Bad Request"
     #return Response(data,status= status.HTTP_400_BAD_REQUEST)
 
-  #{"id":"1","no" :2 ,"feelings" :"انا حزين"}
+  #{"id":"1","no" :"2","feelings" :"انا حزين"}
