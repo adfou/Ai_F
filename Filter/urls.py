@@ -24,4 +24,5 @@ from rest_framework import routers
 urlpatterns = [
     re_path(r'^', include('Api_Serp.Serp_urls')),
     path('admin/', admin.site.urls),
+    #path('api/account/', include('account.api.urls', 'account_api')),
 ]
