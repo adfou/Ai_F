@@ -13,16 +13,16 @@ import os
 from datetime import datetime
 
 # NLTK and Transformers packages
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
+#import nltk
+#from nltk.corpus import stopwords
+#from nltk.stem import WordNetLemmatizer
+#from nltk.tokenize import word_tokenize
 import transformers
 from transformers import BertTokenizer, TFBertForSequenceClassification
 data_folder = os.path.join(os.path.dirname(__file__), "data")
 
 # Add the "data" folder to the nltk.data.path variable
-nltk.data.path.append(data_folder)
+#nltk.data.path.append(data_folder)
     #nltk.download('punkt')
     #nltk.download('stopwords')
     #nltk.download('wordnet')
@@ -40,7 +40,7 @@ def diffrence_time(time,time_report):
 
     timedelta = datetime_report - datetime_news
     return str(timedelta)
-def Lemmatizer_stop_word(sentence):
+'''def Lemmatizer_stop_word(sentence):
     """Function to lemmatize the data"""
     stop_words = set(stopwords.words('english'))
     lemmatizer = WordNetLemmatizer() #look at other Lemmatizers and stemmers
@@ -50,14 +50,14 @@ def Lemmatizer_stop_word(sentence):
                         'even though', 'yet']
     stop_words = [z for z in stop_words if z not in negative]
     preprocessed_tokens = [lemmatizer.lemmatize(contractions.fix(temp.lower())) for temp in sentence.split() if temp not in stop_words] #lemmatization
-    return ' '.join([x for x in preprocessed_tokens]).strip()
+    return ' '.join([x for x in preprocessed_tokens]).strip()'''
 
 # Stop word removal
 def remove_stopwords(phrase):
     """Function to remove stopwords"""
     stop_words = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 
 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
-    words = word_tokenize(phrase)
+    words = phrase.split() #word_tokenize(phrase)
     # Stopwords removing
     stripped_phrase = []
     for word in words:
