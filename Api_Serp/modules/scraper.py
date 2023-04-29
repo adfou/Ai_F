@@ -12,8 +12,10 @@ def scrape_data(country, period):
     # Get news
     news = GoogleNews(period=period)
     news.search(country)
+    #date = news.get_links()
     results = news.result()
-
+    
+    print(results)
     # Store the news on dataframe
     data = pd.DataFrame.from_dict(results)
     
@@ -21,6 +23,6 @@ def scrape_data(country, period):
     newshort = pd.DataFrame({'Title':data['title']})
 
     # Return the data
-    return newshort
+    return newshort,results
     
 

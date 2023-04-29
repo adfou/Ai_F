@@ -9,6 +9,7 @@ import pandas as pd
 import contractions
 from pickle import dump, load
 from .translator import translate_to_arabic, translate_to_english
+import os
 
 # NLTK and Transformers packages
 import nltk
@@ -17,25 +18,15 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 import transformers
 from transformers import BertTokenizer, TFBertForSequenceClassification
-#nltk.download('punkt')
-#nltk.download('stopwords')
-#nltk.download('wordnet')
-#nltk.download('omw-1.4')
+data_folder = os.path.join(os.path.dirname(__file__), "data")
 
-# Sklearn, Tesnorflow and Keras packages
-'''import tensorflow as tf
-from tensorflow import keras
-from transformers import AutoTokenizer, TFBertModel
-from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder
-from tensorflow.keras.layers import Input, Dense
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras.initializers import TruncatedNormal
-from tensorflow.keras.losses import CategoricalCrossentropy
-from tensorflow.keras.metrics import CategoricalAccuracy
-from tensorflow.keras.utils import to_categorical
-from keras.preprocessing.text import Tokenizer
-from keras_preprocessing.sequence import pad_sequences'''
+# Add the "data" folder to the nltk.data.path variable
+nltk.data.path.append(data_folder)
+    #nltk.download('punkt')
+    #nltk.download('stopwords')
+    #nltk.download('wordnet')
+    #nltk.download('omw-1.4')
+
 
 ### Data preprocssing ###
 """Functions help on data preprocessing"""

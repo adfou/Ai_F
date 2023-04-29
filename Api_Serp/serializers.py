@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Account
+from .models import Account,Report
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -45,3 +45,9 @@ class ChangePasswordSerializer(serializers.Serializer):
 	new_password 				= serializers.CharField(required=True)
 	confirm_new_password 		= serializers.CharField(required=True)
 
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = ('time', 'date', 'text_field', 'number', 'user_name', 'forgiven_key')
+
+    

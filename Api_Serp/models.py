@@ -5,8 +5,25 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
 
 
+class Report(models.Model):
+	time = models.TimeField()
+	date = models.DateField()
+	text_felling_field = models.TextField()
+	text_report = models.TextField()
+	number = models.IntegerField() 
+	coordinates =  models.TextField()
+	user_name = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	id = models.AutoField(primary_key=True,auto_created=True)
+	def save(self, *args, **kwargs):
+		# Perform any custom logic here
+		self.my_field = 'custom value'
+		# Call the original save() method to save the object
+		super(Report, self).save(*args, **kwargs)
+		# Return the value of the field after saving
+		return self.id
 class MyAccountManager(BaseUserManager):
 	def create_user(self, email, username, password=None):
 		if not email:
@@ -48,7 +65,7 @@ class Account(AbstractBaseUser):
 
 
 	USERNAME_FIELD = 'username'
-	REQUIRED_FIELDS = []
+	REQUIRED_FIELDS = ['email']
 
 	objects = MyAccountManager()
 
