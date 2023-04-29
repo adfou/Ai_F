@@ -24,6 +24,22 @@ class Report(models.Model):
 		super(Report, self).save(*args, **kwargs)
 		# Return the value of the field after saving
 		return self.id
+class Note(models.Model):
+	time = models.TimeField()
+	date = models.DateField()
+	text_felling_field = models.TextField()
+	text_report = models.TextField()
+	number = models.IntegerField() 
+	coordinates =  models.TextField()
+	user_name = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	id = models.AutoField(primary_key=True,auto_created=True)
+	def save(self, *args, **kwargs):
+		# Perform any custom logic here
+		self.my_field = 'custom value'
+		# Call the original save() method to save the object
+		super(Note, self).save(*args, **kwargs)
+		# Return the value of the field after saving
+		return self.id
 class MyAccountManager(BaseUserManager):
 	def create_user(self, email, username, password=None):
 		if not email:

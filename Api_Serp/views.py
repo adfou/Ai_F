@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .app import feel_ing
 from .reporter import words_classifier,create_report
-from .models import Account,Report
+from .models import Account,Report,Note
 from .serializers import RegistrationSerializer ,ReportSerializer
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -19,6 +19,7 @@ from .modules.utils import remove_stopwords,diffrence_time
 from .modules.translator import translate_to_arabic, translate_to_english
 import Levenshtein
 from .modules.scraper import scrape_data
+from django.core.serializers import serialize
 
 api_token = 'ec3e2412d3d6e96e32039c78f735c2699a9072b0'
 our_token = '71d169a1'
@@ -218,7 +219,7 @@ def compare_report(request):
       prev_feel = report.text_felling_field
       a = remove_stopwords(translate_to_english(cur_desc))
       b = remove_stopwords(translate_to_english(prev_desc))
-      noms.append('report '+str(report.id))
+      noms.append(str(report.id))
       dates.append(prev_date)
       similarity.append(100 - Levenshtein.distance(a, b))
       print('***********************************************************')
@@ -228,7 +229,7 @@ def compare_report(request):
     print(dates) 
     print(similarity) 
     data['dates'] = dates
-    data['noms'] = noms
+    data['id'] = noms
     data['similarity'] = similarity
     return Response(data)
 @api_view(['GET']) 
@@ -315,4 +316,167 @@ def delet_report(request):
             token = auth_token
     main_report.delete()
     data['succes'] = 'report with id =' + report_id + ' was deleted successfully'
+    return Response(data)
+@api_view(['GET']) 
+@permission_classes((IsAuthenticated, ))
+def update_report(request):
+    report_id = request.query_params["report_id"]
+    text = request.query_params["text"]
+    main_report = Report.objects.filter(id=report_id)
+    data = {}   
+    if len(main_report) == 0:
+        data['error'] = 'there is no report with this id =' + report_id
+        return Response(data ,status=404)
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    english , prediction = feel_ing(text)
+    number = len(text.split())
+    main_report.update(text_felling_field=prediction, 
+        text_report =text,number=number)
+    data['succes'] = 'report with id =' + report_id + ' was update successfully'
+    return Response(data)
+
+#----------------------------note----------------
+@api_view(['GET', 'POST'])
+@permission_classes((IsAuthenticated, ))
+def create_Note(request):
+    
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    acount = Token.objects.get(key=token)
+    data = {}
+    token = None
+    content = json.loads(request.body)
+    text = content["text"]
+    english , prediction = feel_ing(text)
+    number_word= len(text.split())
+    cordination = content['coordinate']
+    email = acount.user
+    #data['zabi']=token
+    user = Account.objects.get(email=email)
+
+    note = Note(
+        time =  timezone.now(),
+        date=date.today(), 
+        coordinates=cordination,
+        text_felling_field=prediction, 
+        text_report =text,
+        number=number_word,
+        user_name=user,
+    )
+    print(note)
+    id = note.save()
+    print(note)
+    data["id_note"] = id
+    return Response(data)
+
+@api_view(['GET']) 
+@permission_classes((IsAuthenticated, ))
+def return_note(request):
+    data = {}    
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    acount = Token.objects.get(key=token)
+    email = acount.user
+    all_instances = Note.objects.filter(user_name=email)
+    data = {"Notes": list(all_instances.values())}
+    return Response(data)
+  
+@api_view(['GET']) 
+@permission_classes((IsAuthenticated, ))
+def compare_note(request):
+    note_id = request.query_params["note_id"]
+    data = {}    
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    data['note_id'] = note_id
+    main_report = Note.objects.filter(id=note_id)
+    main_report = main_report.values()
+    main_report =  main_report[0]
+    cur_date = main_report['date']
+    cur_desc =main_report['text_report']
+    cur_feel = main_report['text_felling_field']
+
+    user_id_for_report = main_report["user_name_id"]
+    all_report = Note.objects.exclude(id=note_id).filter(user_name_id=user_id_for_report)
+    similarity = []
+    noms = []
+    dates = []
+    for report in all_report :
+      prev_date =report.date
+      prev_desc =report.text_report
+      prev_feel = report.text_felling_field
+      a = remove_stopwords(translate_to_english(cur_desc))
+      b = remove_stopwords(translate_to_english(prev_desc))
+      noms.append(str(report.id))
+      dates.append(prev_date)
+      similarity.append(100 - Levenshtein.distance(a, b))
+      
+    data['dates'] = dates
+    data['id'] = noms
+    data['similarity'] = similarity
+    return Response(data)
+
+@api_view(['GET']) 
+@permission_classes((IsAuthenticated, ))
+def delet_note(request):
+    note_id = request.query_params["note_id"]
+    main_report = Report.objects.filter(id=note_id)
+    data = {}   
+    if len(main_report) == 0:
+        data['error'] = 'there is no note with this id =' + note_id
+        return Response(data ,status=404)
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    main_report.delete()
+    data['succes'] = 'note with id = ' + note_id + ' was deleted successfully'
+    return Response(data)
+
+@api_view(['GET']) 
+@permission_classes((IsAuthenticated, ))
+def update_note(request):
+    report_id = request.query_params["note_id"]
+    text = request.query_params["text"]
+    main_report = Note.objects.filter(id=report_id)
+    data = {}   
+    if len(main_report) == 0:
+        data['error'] = 'there is no note with this id = ' + report_id
+        return Response(data ,status=404)
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    english , prediction = feel_ing(text)
+    number = len(text.split())
+    main_report.update(text_felling_field=prediction, 
+        text_report =text,number=number)
+    data['succes'] = 'Note with id = ' + report_id + ' was update successfully'
     return Response(data)

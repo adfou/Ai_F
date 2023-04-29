@@ -48,6 +48,6 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
-        fields = ('time', 'date', 'text_field', 'number', 'user_name', 'forgiven_key')
+        fields = ('time', 'date', 'text_felling_field', 'text_report','number', 'user_name', 'forgiven_key')
 
     
