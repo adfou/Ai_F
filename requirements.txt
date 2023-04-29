@@ -40,3 +40,4 @@ contractions==0.1.73
 transformers==4.26.1
 Levenshtein==0.20.9
 gunicorn==20.0.4
+nltk==3.8.1
