@@ -10,6 +10,7 @@ import contractions
 from pickle import dump, load
 from .translator import translate_to_arabic, translate_to_english
 import os
+from datetime import datetime
 
 # NLTK and Transformers packages
 import nltk
@@ -32,6 +33,13 @@ nltk.data.path.append(data_folder)
 """Functions help on data preprocessing"""
 
 # Lemmatization
+
+def diffrence_time(time,time_report):
+    datetime_news = datetime.strptime(time, '%Y-%m-%d %H:%M:%S.%f')
+    datetime_report = datetime.strptime(time_report, '%Y-%m-%d %H:%M:%S.%f')
+
+    timedelta = datetime_report - datetime_news
+    return str(timedelta)
 def Lemmatizer_stop_word(sentence):
     """Function to lemmatize the data"""
     stop_words = set(stopwords.words('english'))

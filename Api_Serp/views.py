@@ -13,8 +13,9 @@ from rest_framework.authtoken.models import Token
 import time
 from django.utils import timezone
 from datetime import date
+import datetime as dt
 import json
-from .modules.utils import remove_stopwords
+from .modules.utils import remove_stopwords,diffrence_time
 from .modules.translator import translate_to_arabic, translate_to_english
 import Levenshtein
 from .modules.scraper import scrape_data
@@ -143,12 +144,9 @@ def create_report(request):
     data = {}
     token = None
     content = json.loads(request.body)
-    print(content)
     text = content["text"]
     english , prediction = feel_ing(text)
-    print(prediction)
     number_word= len(text.split())
-    print('---------------body------------')
     cordination = content['coordinate']
     email = acount.user
     #data['zabi']=token
@@ -209,9 +207,8 @@ def compare_report(request):
     cur_desc =main_report['text_report']
     cur_feel = main_report['text_felling_field']
 
-    print(main_report)
-    print('----------------------')
-    all_report = Report.objects.exclude(id=report_id)
+    user_id_for_report = main_report["user_name_id"]
+    all_report = Report.objects.exclude(id=report_id).filter(user_name_id=user_id_for_report)
     similarity = []
     noms = []
     dates = []
@@ -257,21 +254,65 @@ def compare_news(request):
     cur_feel = main_report['text_felling_field']
     news,new_all = scrape_data(country, period)
     new_all = new_all
-    print(new_all)
+    main_report_date_time =str(main_report['date'])+" "+str(main_report['time']) 
+    print("********************************")
+    #diffrence_time
+    print(str(main_report['date'])+" "+str(main_report['time']))
+    print("********************************")
     news = news['Title'].values.tolist()
    
     similarity = []
     vip_news = []
-    for new in news:
+    news_after_procces = []
+    for i in range(len(news)):
         a = remove_stopwords(translate_to_english(cur_desc))
-        b = remove_stopwords(translate_to_english(new))
+        b = remove_stopwords(translate_to_english(news[i]))
         sim = 100 - Levenshtein.distance(a, b)
         similarity.append(sim)
-        if sim > 90:
-            vip_news.append(new)
-        else:
-            print(f"There's No to {new}")
-    data['similare_news']= vip_news
-    data['similarity']= similarity
-    data['new'] = new_all
+        #print(new_all[i]['datetime'])
+        site = {}
+        site['link'] = new_all[i]['link']
+        site['title'] = translate_to_arabic(new_all[i]['title'])
+        site['desc'] = translate_to_arabic(new_all[i]['desc'])
+        site['media'] = new_all[i]['media']
+        if new_all[i]['datetime'] != None:
+            site['date'] = str(new_all[i]['datetime']).split("T")[0]
+            
+            time_news = new_all[i]['datetime']
+            print(diffrence_time(str(time_news),main_report_date_time))
+            site['time interval between the two'] = diffrence_time(str(time_news),main_report_date_time)
+        else : 
+            now = date.today()
+            current_year = year = str(now.year)+'-'+str(now.month)+'-'+str(now.day)
+            site['date'] =current_year
+            site['time interval between the two'] = new_all[i]['date']
+        site['similarity'] = sim
+        news_after_procces.append(site)
+        if sim > 70:
+            vip_news.append(site)
+    #data['similare_news']= vip_news
+    #data['similarity']= similarity
+    data['new'] = news_after_procces
+    return Response(data)
+
+
+@api_view(['GET']) 
+@permission_classes((IsAuthenticated, ))
+def delet_report(request):
+    report_id = request.query_params["report_id"]
+    main_report = Report.objects.filter(id=report_id)
+    
+    data = {}   
+    if len(main_report) == 0:
+        data['error'] = 'there is no report with this id =' + report_id
+        return Response(data ,status=404)
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    main_report.delete()
+    data['succes'] = 'report with id =' + report_id + ' was deleted successfully'
     return Response(data)

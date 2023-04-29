@@ -15,7 +15,6 @@ def scrape_data(country, period):
     #date = news.get_links()
     results = news.result()
     
-    print(results)
     # Store the news on dataframe
     data = pd.DataFrame.from_dict(results)
     
