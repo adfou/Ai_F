@@ -144,7 +144,13 @@ def create_report(request):
     acount = Token.objects.get(key=token)
     data = {}
     token = None
-    content = json.loads(request.body)
+    print(request.body)
+    try:
+      content = json.loads(request.body)
+    except:
+        data ={}
+        data['response'] = 'Invalid JSON format.'
+        return Response(data)
     text = content["text"]
     english , prediction = feel_ing(text)
     number_word= len(text.split())
