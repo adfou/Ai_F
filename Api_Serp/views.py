@@ -157,8 +157,8 @@ def create_report(request):
     print("*****************")
     english , prediction = feel_ing(text)
     number_word= len(text.split())
-    cordination = request.POST.get('cordination')
-    print("cordination")
+    cordination = request.POST.get('coordinate')
+    print(cordination)
     #data['zabi']=token
     user = Account.objects.get(email=email)
 
