@@ -144,18 +144,21 @@ def create_report(request):
     acount = Token.objects.get(key=token)
     data = {}
     token = None
-    print(request.body)
-    try:
-      content = json.loads(request.body)
-    except:
-        data ={}
-        data['response'] = 'Invalid JSON format.'
-        return Response(data)
-    text = content["text"]
+    email = acount.user
+    #try:
+      #content = json.loads(request.body)
+    #except:
+        #data ={}
+        #data['response'] = 'Invalid JSON format.'
+        #return Response(data)
+    #text = content["text"]
+    text = request.POST.get('text')
+    print(text)
+    print("*****************")
     english , prediction = feel_ing(text)
     number_word= len(text.split())
-    cordination = content['coordinate']
-    email = acount.user
+    cordination = request.POST.get('cordination')
+    print("cordination")
     #data['zabi']=token
     user = Account.objects.get(email=email)
 
@@ -362,11 +365,15 @@ def create_Note(request):
     acount = Token.objects.get(key=token)
     data = {}
     token = None
-    content = json.loads(request.body)
-    text = content["text"]
+    #content = json.loads(request.body)
+    #text = content["text"]
+    text = request.POST.get('text')
+    print(text)
+    #print("************************************")
     english , prediction = feel_ing(text)
     number_word= len(text.split())
-    cordination = content['coordinate']
+    #cordination = content['coordinate']
+    cordination = request.POST.get('coordinate')
     email = acount.user
     #data['zabi']=token
     user = Account.objects.get(email=email)
@@ -380,7 +387,6 @@ def create_Note(request):
         number=number_word,
         user_name=user,
     )
-    print(note)
     id = note.save()
     print(note)
     data["id_note"] = id
@@ -480,9 +486,20 @@ def update_note(request):
         auth_scheme, auth_token = auth_header.split(' ')
         if auth_scheme == 'token':
             token = auth_token
+
     english , prediction = feel_ing(text)
     number = len(text.split())
     main_report.update(text_felling_field=prediction, 
         text_report =text,number=number)
     data['succes'] = 'Note with id = ' + report_id + ' was update successfully'
+    return Response(data)
+
+@api_view(['GET', 'POST'])
+def test_form_post(request):
+    data = {}
+    print(request.POST)
+    name = request.POST.get('name')
+    print("***********************")
+    print(name)
+    data["name"]=name   
     return Response(data)

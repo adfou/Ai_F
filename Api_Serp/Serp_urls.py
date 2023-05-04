@@ -20,4 +20,6 @@ urlpatterns = [
     re_path(r'^api/note/compare/$', views.compare_note),
     re_path(r'^api/note/delet/$', views.delet_note),
     re_path(r'^api/note/update/$', views.update_note),
+    re_path(r'^api/test/$', views.test_form_post),
+    
     ]
