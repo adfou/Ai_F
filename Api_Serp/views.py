@@ -181,6 +181,25 @@ def create_report(request):
 
 @api_view(['GET']) 
 @permission_classes((IsAuthenticated, ))
+def return_report_id(request):
+   
+    data = {}    
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    report_id = request.query_params["report_id"]
+    acount = Token.objects.get(key=token)
+    email = acount.user
+    all_instances = Report.objects.filter(user_name=email,id=report_id)
+    data = {"reports": list(all_instances.values())}
+    return Response(data)
+
+@api_view(['GET']) 
+@permission_classes((IsAuthenticated, ))
 def return_report(request):
    
     data = {}    
@@ -196,7 +215,6 @@ def return_report(request):
     all_instances = Report.objects.filter(user_name=email)
     data = {"reports": list(all_instances.values())}
     return Response(data)
-  
 @api_view(['GET']) 
 @permission_classes((IsAuthenticated, ))
 def compare_report(request):
@@ -408,7 +426,24 @@ def return_note(request):
     all_instances = Note.objects.filter(user_name=email)
     data = {"Notes": list(all_instances.values())}
     return Response(data)
-  
+@api_view(['GET']) 
+@permission_classes((IsAuthenticated, ))
+def return_note_id(request):
+    data = {}    
+    # check if the Authorization header exists in the request
+    if 'Authorization' in request.headers:
+        # split the header value into the authentication scheme and token
+        auth_header = request.headers['Authorization']
+        auth_scheme, auth_token = auth_header.split(' ')
+        if auth_scheme == 'token':
+            token = auth_token
+    
+    note_id = request.query_params["note_id"]
+    acount = Token.objects.get(key=token)
+    email = acount.user
+    all_instances = Note.objects.filter(user_name=email,id=note_id)
+    data = {"Notes": list(all_instances.values())}
+    return Response(data)
 @api_view(['GET']) 
 @permission_classes((IsAuthenticated, ))
 def compare_note(request):

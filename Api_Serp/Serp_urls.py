@@ -13,10 +13,14 @@ urlpatterns = [
     re_path(r'^api/report/delet/$', views.delet_report),
     re_path(r'^api/report/update/$', views.update_report),
     re_path(r'^api/report/get/$', views.return_report),
+    re_path(r'^api/report/get/id/$', views. return_report_id),
+   
     re_path(r'^api/report/compare/$', views.compare_report),
     re_path(r'^api/report/compare/news/$', views.compare_news),
     re_path(r'^api/note/creat/$', views.create_Note),
     re_path(r'^api/note/get/$', views.return_note),
+    re_path(r'^api/note/get/id/$', views.return_note_id),
+    
     re_path(r'^api/note/compare/$', views.compare_note),
     re_path(r'^api/note/delet/$', views.delet_note),
     re_path(r'^api/note/update/$', views.update_note),
