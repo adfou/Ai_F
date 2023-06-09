@@ -195,7 +195,11 @@ def return_report_id(request):
     acount = Token.objects.get(key=token)
     email = acount.user
     all_instances = Report.objects.filter(user_name=email,id=report_id)
-    data = {"reports": list(all_instances.values())}
+    list_instance = all_instances.values()
+    if len(list_instance) >0 :
+      data = {"report": all_instances.values()[0]}
+    else:
+        data = {"report": ""}
     return Response(data)
 
 @api_view(['GET']) 
@@ -442,7 +446,11 @@ def return_note_id(request):
     acount = Token.objects.get(key=token)
     email = acount.user
     all_instances = Note.objects.filter(user_name=email,id=note_id)
-    data = {"Notes": list(all_instances.values())}
+    list_instance = all_instances.values()
+    if len(list_instance) >0 :
+      data = {"note": all_instances.values()[0]}
+    else:
+        data = {"note": ""}
     return Response(data)
 @api_view(['GET']) 
 @permission_classes((IsAuthenticated, ))
@@ -466,6 +474,7 @@ def compare_note(request):
 
     user_id_for_report = main_report["user_name_id"]
     all_report = Note.objects.exclude(id=note_id).filter(user_name_id=user_id_for_report)
+    
     similarity = []
     noms = []
     dates = []
